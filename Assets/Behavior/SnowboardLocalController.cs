@@ -17,73 +17,7 @@ public class SnowboardLocalController : SnowboardController
 	public void Setup()
 	{
 	}
-		
-	void _OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info) 
-	{
-		Vector3 velocity = Vector3.zero,  position = Vector3.zero;
-		Quaternion rotation = Quaternion.identity;
-		float lean = 0, pivot = 0;
-		
-	    if (stream.isWriting) 
-	    {
-    	    velocity = mVelocity;
-    	    position = transform.position;
-    	    lean = this.mSteeringControl.Lean;
 
-        	stream.Serialize(ref position);
-        	stream.Serialize(ref rotation);
-        	stream.Serialize(ref velocity);
-        	stream.Serialize(ref pivot);
-        	stream.Serialize(ref lean);
-	    } 
-	    else 
-	    {
-        	stream.Serialize(ref position);
-        	stream.Serialize(ref rotation);
-        	stream.Serialize(ref velocity);
-        	stream.Serialize(ref pivot);
-        	stream.Serialize(ref lean);
-
-			transform.position = position;
-        	mVelocity = velocity;
-        	mSteeringControl.Lean = lean;
-	    }    
-	}
-	
-    void OnNetworkInstantiate(NetworkMessageInfo info) 
-    {
-    	Debug.Log("OnNetworkInstantiate: " + info);
-
-    	// If this object is the local character controller. Attach the camera to this object and enable the local controls script
-    	// TODO: run an init script to config things like the trail length and particle renderers
-//    	NetworkView networkView = info.networkView;
-		if (networkView.isMine)
-		{	
-			GameObject camera = GameObject.Find("Orbit Camera");
-			
-			if (camera != null)
-			{
-				MouseOrbitCameraController cameraController = camera.GetComponent<MouseOrbitCameraController>();
-		    	Debug.Log("Attach: " + cameraController);
-		    	Transform root = transform.Find("Ragdoll/Root");
-		    	if (root)
-					cameraController.target = root;
-				else
-					cameraController.target = transform;
-			}
-			else
-				Debug.LogError("Couldn't find camera");
-
-			GetComponent<SnowboardLocalController>().enabled = true;
-			GetComponent<SnowboardRemoteController>().enabled = false;
-		}
-		else
-		{
-			GetComponent<SnowboardLocalController>().enabled = false;
-			GetComponent<SnowboardRemoteController>().enabled = true;
-		}
-    }
-    	
 	public void Update()
 	{
 		UpdateSteering();
@@ -115,11 +49,13 @@ public class SnowboardLocalController : SnowboardController
 	public void UpdateSteering()
 	{
 		// Update lean and pivot values in response to player inputs
-			
+		Debug.Log("Update Steering " + Input.GetKey(KeyCode.RightArrow).ToString());
 		Vector3 dir = Vector3.zero;
-        dir.x = -Input.acceleration.y;
-        dir.z = Input.acceleration.x;
-         
+		float fakeR = Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+		float fakeL = Input.GetKey(KeyCode.LeftArrow) ? -1 : 0;
+        dir.x = -Input.acceleration.y + fakeL + fakeR;
+        dir.z = Input.acceleration.x;	
+		Debug.Log("Steer " + fakeR.ToString() + " " + fakeL.ToString());
         dir = LowPassFilter(dir);
         
         if (dir.sqrMagnitude > 1)

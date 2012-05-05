@@ -1,0 +1,172 @@
+fileFormatVersion: 1
+guid: e31b1466e6ad69b4e89700c2eba7440a
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 2
+    splitAnimations: 1
+    clips:
+      idle:
+        firstFrame: 1
+        lastFrame: 30
+        loop: 1
+        wrapMode: 2
+      idle_move_forward:
+        firstFrame: 33
+        lastFrame: 52
+        loop: 1
+        wrapMode: 2
+      forward:
+        firstFrame: 55
+        lastFrame: 74
+        loop: 1
+        wrapMode: 2
+      forward_right:
+        firstFrame: 77
+        lastFrame: 96
+        loop: 1
+        wrapMode: 2
+      forward_left:
+        firstFrame: 99
+        lastFrame: 118
+        loop: 1
+        wrapMode: 2
+      crouch:
+        firstFrame: 121
+        lastFrame: 140
+        loop: 1
+        wrapMode: 2
+      jump:
+        firstFrame: 143
+        lastFrame: 162
+        loop: 0
+        wrapMode: 1
+      in_air:
+        firstFrame: 165
+        lastFrame: 184
+        loop: 1
+        wrapMode: 2
+      landing:
+        firstFrame: 187
+        lastFrame: 208
+        loop: 0
+        wrapMode: 1
+  nodeInfo:
+    Bone13:
+    - 100000
+    - 400000
+    Bone01:
+    - 100002
+    - 400002
+    Bone07:
+    - 100004
+    - 400004
+    Bone03:
+    - 100006
+    - 400006
+    Bone14:
+    - 100008
+    - 400008
+    Bone20:
+    - 100010
+    - 400010
+    Bone11:
+    - 100012
+    - 400012
+    Bone19:
+    - 100014
+    - 400014
+    Bone17:
+    - 100016
+    - 400016
+    Bone12:
+    - 100018
+    - 400018
+    Bone06:
+    - 100020
+    - 400020
+    Bone16:
+    - 100022
+    - 400022
+    Bone10:
+    - 100024
+    - 400024
+    Circle01:
+    - 100026
+    - 400026
+    - 3300000
+    - 2300000
+    Bone08:
+    - 100028
+    - 400028
+    UrbanMan 1:
+    - 100030
+    - 400030
+    - 13700000
+    Bone18:
+    - 100032
+    - 400032
+    Bone15:
+    - 100034
+    - 400034
+    Bone04:
+    - 100036
+    - 400036
+    Bone02:
+    - 100038
+    - 400038
+    Bone05:
+    - 100040
+    - 400040
+    Bone21:
+    - 100042
+    - 400042
+    Bone09:
+    - 100044
+    - 400044
+    //RootNode:
+    - 100046
+    - 400046
+    - 11100000
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: UrbanMan 1
+    4300002: Circle01
+    7400000: Take 001 //// Master_30fps
+    7400002: idle //// Master_30fps
+    7400004: idle_move_forward //// Master_30fps
+    7400006: idle01 //// Master_30fps
+    7400008: idle012 //// Master_30fps
+    7400010: forward //// Master_30fps
+    7400012: forward_right //// Master_30fps
+    7400014: forward_left //// Master_30fps
+    7400016: crouch //// Master_30fps
+    7400018: jump //// Master_30fps
+    7400020: in_air //// Master_30fps
+    7400022: landing //// Master_30fps
+    7400024: idle //// Snowboarder_Master_Rescaled
+    7400026: idle_move_forward //// Snowboarder_Master_Rescaled
+    7400028: forward //// Snowboarder_Master_Rescaled
+    7400030: forward_right //// Snowboarder_Master_Rescaled
+    7400032: forward_left //// Snowboarder_Master_Rescaled
+    7400034: crouch //// Snowboarder_Master_Rescaled
+    7400036: jump //// Snowboarder_Master_Rescaled
+    7400038: in_air //// Snowboarder_Master_Rescaled
+    7400040: landing //// Snowboarder_Master_Rescaled

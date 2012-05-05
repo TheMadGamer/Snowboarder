@@ -1,0 +1,207 @@
+fileFormatVersion: 1
+guid: b55054687080a4c468626e6162e7faea
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 1
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+    clips:
+      idle:
+        firstFrame: 1
+        lastFrame: 30
+        loop: 1
+        wrapMode: 2
+      idle_forward:
+        firstFrame: 33
+        lastFrame: 52
+        loop: 1
+        wrapMode: 2
+      forward:
+        firstFrame: 55
+        lastFrame: 74
+        loop: 1
+        wrapMode: 2
+      forward_right:
+        firstFrame: 77
+        lastFrame: 96
+        loop: 1
+        wrapMode: 2
+      forward_left:
+        firstFrame: 99
+        lastFrame: 118
+        loop: 1
+        wrapMode: 2
+      crouch:
+        firstFrame: 121
+        lastFrame: 140
+        loop: 1
+        wrapMode: 2
+      jump:
+        firstFrame: 143
+        lastFrame: 162
+        loop: 0
+        wrapMode: 8
+      in_air:
+        firstFrame: 165
+        lastFrame: 184
+        loop: 1
+        wrapMode: 2
+      landing:
+        firstFrame: 187
+        lastFrame: 208
+        loop: 0
+        wrapMode: 8
+  nodeInfo:
+    IK Chain02:
+    - 100000
+    - 400000
+    Circle03:
+    - 100002
+    - 400002
+    - 3300000
+    - 2300000
+    IK Chain01:
+    - 100004
+    - 400004
+    Circle04:
+    - 100006
+    - 400006
+    - 3300002
+    - 2300002
+    Bone08:
+    - 100008
+    - 400008
+    Bone06:
+    - 100010
+    - 400010
+    Bone05:
+    - 100012
+    - 400012
+    Bone07:
+    - 100014
+    - 400014
+    Circle01:
+    - 100016
+    - 400016
+    - 3300004
+    - 2300004
+    Bone04:
+    - 100018
+    - 400018
+    Bone03:
+    - 100020
+    - 400020
+    Bone02:
+    - 100022
+    - 400022
+    Bone01:
+    - 100024
+    - 400024
+    Bone21:
+    - 100026
+    - 400026
+    Bone20:
+    - 100028
+    - 400028
+    Bone16:
+    - 100030
+    - 400030
+    Bone15:
+    - 100032
+    - 400032
+    Bone14:
+    - 100034
+    - 400034
+    Bone13:
+    - 100036
+    - 400036
+    Bone12:
+    - 100038
+    - 400038
+    //RootNode:
+    - 100040
+    - 400040
+    - 11100000
+    Particle View 01:
+    - 100042
+    - 400042
+    Particle View 01 1:
+    - 100044
+    - 400044
+    Bone11:
+    - 100046
+    - 400046
+    Bone10:
+    - 100048
+    - 400048
+    Bone09:
+    - 100050
+    - 400050
+    Bone19:
+    - 100052
+    - 400052
+    Bone18:
+    - 100054
+    - 400054
+    Bone17:
+    - 100056
+    - 400056
+    UrbanMan 1:
+    - 100058
+    - 400058
+    - 13700000
+    Camera01.Target:
+    - 100060
+    - 400060
+    Camera01:
+    - 100062
+    - 400062
+    camera1_group:
+    - 100064
+    - 400064
+    pointLight2:
+    - 100066
+    - 400066
+    pointLight1:
+    - 100068
+    - 400068
+    Spot01.Target:
+    - 100070
+    - 400070
+    spotLight1:
+    - 100072
+    - 400072
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: UrbanMan 1
+    4300002: Circle01
+    4300004: Circle04
+    4300006: Circle03
+    7400000: Take 001 //// snowboarder_MasterAnimation
+    7400002: idle //// snowboarder_MasterAnimation.2.0
+    7400004: idle0 //// snowboarder_MasterAnimation.2.0
+    7400006: forward //// snowboarder_MasterAnimation.2.0
+    7400008: idle_forward //// snowboarder_MasterAnimation.2.0
+    7400010: forward_right //// snowboarder_MasterAnimation.2.0
+    7400012: forward_left //// snowboarder_MasterAnimation.2.0
+    7400014: crouch //// snowboarder_MasterAnimation.2.0
+    7400016: jump //// snowboarder_MasterAnimation.2.0
+    7400018: in_air //// snowboarder_MasterAnimation.2.0
+    7400020: landing //// snowboarder_MasterAnimation.2.0

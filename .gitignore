@@ -1,0 +1,10 @@
+.DS_Store
+Library/cache
+Library/metadata
+Library/previews
+Library/ScriptAssemblies
+Builds/build
+Builds/Data
+Builds/Libraries
+Builds/Unity-iPhone.xcodeproj/tony.pbxuser
+Builds/Unity-iPhone.xcodeproj/tony.mode1v3

@@ -197,7 +197,6 @@ public class SnowboardController : MonoBehaviour
 			}				
 		}
 		
-		
 		mGround = hit.point;
 		
 		Debug.DrawLine(hit.point+Vector3.up*0.1f, hit.point-Vector3.up*0.1f, Color.red);

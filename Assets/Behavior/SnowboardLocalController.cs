@@ -49,13 +49,13 @@ public class SnowboardLocalController : SnowboardController
 	public void UpdateSteering()
 	{
 		// Update lean and pivot values in response to player inputs
-		Debug.Log("Update Steering " + Input.GetKey(KeyCode.RightArrow).ToString());
+		//Debug.Log("Update Steering " + Input.GetKey(KeyCode.RightArrow).ToString());
 		Vector3 dir = Vector3.zero;
 		float fakeR = Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
 		float fakeL = Input.GetKey(KeyCode.LeftArrow) ? -1 : 0;
         dir.x = -Input.acceleration.y + fakeL + fakeR;
         dir.z = Input.acceleration.x;	
-		Debug.Log("Steer " + fakeR.ToString() + " " + fakeL.ToString());
+		//Debug.Log("Steer " + fakeR.ToString() + " " + fakeL.ToString());
         dir = LowPassFilter(dir);
         
         if (dir.sqrMagnitude > 1)
@@ -71,7 +71,7 @@ public class SnowboardLocalController : SnowboardController
 		
 		float acc = dir.x * Time.deltaTime;
 		
-		Debug.Log("Accel " + acc.ToString());
+		//Debug.Log("Accel " + acc.ToString());
 		
 		
 		if(dir.x < -0.2f)

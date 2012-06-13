@@ -25,7 +25,7 @@ The mesh is udpated automatically if the region is set using SetRegion(rect)
 
 public class HillGenerator : MonoBehaviour 
 {
-	// The target transform - the mesh is recentered around this object every Updatge
+	// The target transform - the mesh is recentered around this object every Update
 	public Transform target;
 	
 	// The mesh component - either a MeshFilter or MeshCollider

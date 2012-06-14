@@ -33,15 +33,18 @@ public class TerrainManager : MonoBehaviour {
 	}
 	
 	void AddRock() {
-		Transform rockTransform = target.transform;
+		Debug.Log(target.name);
+		Transform targetTransform = target.transform;
 		Vector3 forward = target.transform.forward;
-		Vector3 raycastPoint = rockTransform.position + forward * 20 + Vector3.up * 10.0f;
+		Debug.Log("Target transform " + targetTransform.position.ToString());
+		Vector3 raycastPoint = targetTransform.position + forward * 20 + Vector3.up * 10.0f;
 		RaycastHit hit;
 		bool didHit = Physics.Raycast(raycastPoint, Vector3.down, out hit);
 		if (didHit) {
 			// Instantiate a point at hit.point
 			GameObject newRock = (GameObject) GameObject.Instantiate(rock);
 			newRock.transform.position = hit.point;
+			Debug.Log("Hit Point" + hit.point);
 		}
 	}
 }

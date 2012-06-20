@@ -19,32 +19,67 @@ public class TerrainManager : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		lastRockTime = 0;
+		AddBackRow();
+		if (ShouldLayoutNextRow()) {
+			LayoutNextRow();
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		lastRockTime += Time.deltaTime;
-				
-		if (lastRockTime > 3) {
-			lastRockTime = 0;	
-			AddRock();
+		if (ShouldLayoutNextRow()) {
+			LayoutNextRow();
 		}
 	}
 	
-	void AddRock() {
-		Debug.Log(target.name);
+	bool ShouldLayoutNextRow() {
+
+		// If target is too close to edge, layout next level.
+		return false;
+	}
+	
+	void AddBackRow() {
+		GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+		plane.transform.localScale = new Vector3(10,10,10);
+		plane.transform.position = transform.position;
+		plane.transform.rotation = transform.rotation;
+		plane.transform.parent = transform;
+	}
+	
+	void LayoutNextRow () {
 		Transform targetTransform = target.transform;
-		Vector3 forward = target.transform.forward;
-		Debug.Log("Target transform " + targetTransform.position.ToString());
-		Vector3 raycastPoint = targetTransform.position + forward * 20 + Vector3.up * 10.0f;
-		RaycastHit hit;
-		bool didHit = Physics.Raycast(raycastPoint, Vector3.down, out hit);
-		if (didHit) {
-			// Instantiate a point at hit.point
-			GameObject newRock = (GameObject) GameObject.Instantiate(rock);
-			newRock.transform.position = hit.point;
-			Debug.Log("Hit Point" + hit.point);
+
+		for (int x = -10 ; x <= 10; x++) {
+			for (int y = -10; y <= 10; y++) {	
+				
+				int numRocks = ((int) Random.value * 2) + 1;
+				for (int n = 0 ; n < numRocks; n++) { 
+					GameObject newRock = (GameObject) GameObject.Instantiate(rock);
+					
+					Vector3 forward = tempMesh.transform.forward;
+					Vector3 binormal = Vector3.Cross(forward, tempMesh.transform.up);
+					Vector3 scale = new Vector3(2000,2000,2000); //tempMesh.transform.lossyScale;
+					Debug.Log("sc " + scale.ToString());
+					
+					Vector3 f =  new Vector3(forward.x * scale.x,
+											 forward.y * scale.y,
+											 forward.z * scale.z);
+					Vector3 b =  new Vector3(binormal.x * scale.x,
+											 binormal.y * scale.y,
+											 binormal.z * scale.z);
+						
+					float subX = ((float) x) / 10.0f;
+					float subY = ((float) y) / 10.0f;
+					Debug.Log( subX.ToString() + " " + subY.ToString());
+					
+					Vector3 newPt =  tempMesh.transform.position + b * subX + f * subY;	
+					Debug.Log( b.ToString());
+					Debug.Log( f.ToString());
+					
+					
+					newRock.transform.position = newPt;
+				}
+			}
 		}
 	}
 }

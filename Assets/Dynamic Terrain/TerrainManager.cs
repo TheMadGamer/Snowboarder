@@ -8,28 +8,95 @@ using System.Collections;
 
 public class TerrainManager : MonoBehaviour {
 	
-	public GameObject tempMesh;
 	public GameObject rock;
 	public GameObject tree;
 	
 	// The target transform - the mesh is recentered around this object every Update
 	public GameObject target;
 	
-	private float lastRockTime;
+	public Material snowMaterial;
 	
-	// Use this for initialization
-	void Start () {
-		AddBackRow();
-		if (ShouldLayoutNextRow()) {
-			LayoutNextRow();
+  	public Vector3[] newVertices;
+    public Vector2[] newUV;
+    public int[] newTriangles;
+	
+	private int numHorizontalVertices = 11;
+	private int numVerticalVertices = 11;
+	
+	void Start() {
+    	GenerateVertices();
+		
+		Mesh mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+        mesh.vertices = newVertices;
+        mesh.uv = newUV;
+        mesh.triangles = newTriangles;
+		mesh.RecalculateBounds();
+		mesh.RecalculateNormals();
+
+		renderer.material = snowMaterial;
+		
+		MeshCollider meshCollider = GetComponent<MeshCollider>();
+		// Create a new mesh for the mesh collider and a grid mesh to reference it
+		meshCollider = GetComponent<MeshCollider>();
+		meshCollider.sharedMesh = mesh;
+		
+    }
+	// Update is called once per frame
+	void Update () {
+
+	}
+	
+	void GenerateVertices() {
+		newVertices = new Vector3[numHorizontalVertices * numVerticalVertices];
+		newUV = new Vector2[numHorizontalVertices * numVerticalVertices];
+		newTriangles = new int[(numHorizontalVertices - 1) * (numVerticalVertices - 1) * 6];
+		
+		for (int i = 0; i < numVerticalVertices; i++) {
+			for (int j = 0; j < numHorizontalVertices; j++) {
+				newVertices[i * numVerticalVertices + j] = VertexAtIndex(i, j);
+			}
+		}
+		
+		for (int i = 0; i < numVerticalVertices; i++) {
+			for (int j = 0; j < numHorizontalVertices; j++) {
+				newUV[i * numVerticalVertices + j] = UVAtIndex(i, j);
+			}
+		}
+		
+		for (int i = 0; i < numVerticalVertices - 1; i++) {
+			TriangulateRow(i);
 		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if (ShouldLayoutNextRow()) {
-			LayoutNextRow();
+	void TriangulateRow(int triangleRowIndex) {	
+		for (int j = 0; j < numHorizontalVertices - 1; j++) {
+			int baseVertexIndex = triangleRowIndex * numHorizontalVertices + j; 
+			int baseTriangleIndex = (triangleRowIndex * (numHorizontalVertices - 1) + j) * 6;
+			Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
+			newTriangles[baseTriangleIndex] = baseVertexIndex;
+			newTriangles[baseTriangleIndex + 1] = baseVertexIndex + 1;
+			newTriangles[baseTriangleIndex + 2] = baseVertexIndex + numHorizontalVertices;	
+
+			newTriangles[baseTriangleIndex + 3] = baseVertexIndex + numHorizontalVertices;
+			newTriangles[baseTriangleIndex + 4] = baseVertexIndex + 1;
+			newTriangles[baseTriangleIndex + 5] = baseVertexIndex + numHorizontalVertices + 1;		
 		}
+	}
+	
+	Vector3 VertexAtIndex(int i, int j) {
+		// TODO randomize the y component to get a displacement map
+		return new Vector3((i -  Mathf.Floor(numVerticalVertices / 2)) * 10.0f, 0, (j - Mathf.Floor(numHorizontalVertices / 2)) * 10.0f);
+	}
+	
+	Vector2 UVAtIndex(int i, int j) {
+		return new Vector2( ((float)i)/((float)numVerticalVertices), ((float)j)/((float)numHorizontalVertices) );	
+	}
+	
+	void ShiftVerticesDown() {
+		Vector3[] oldVertices = newVertices;
+		newVertices = new Vector3[oldVertices.Length];
+		//  TODO
 	}
 	
 	bool ShouldLayoutNextRow() {
@@ -45,7 +112,7 @@ public class TerrainManager : MonoBehaviour {
 		plane.transform.rotation = transform.rotation;
 		plane.transform.parent = transform;
 	}
-	
+	/*
 	void LayoutNextRow () {
 		Transform targetTransform = target.transform;
 
@@ -82,4 +149,5 @@ public class TerrainManager : MonoBehaviour {
 			}
 		}
 	}
+	*/
 }

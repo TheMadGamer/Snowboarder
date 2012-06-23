@@ -39,8 +39,9 @@ public class TerrainManager : MonoBehaviour {
 		Vector3[] vertices = new Vector3[kNumHorizontalVertices * 2];
     	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
     	int[] triangles = new int[(kNumHorizontalVertices - 1) * 6];
+		Vector3[] normals = new Vector3[kNumHorizontalVertices * 2];
 
-		GenerateVertices(rowIndex, vertices, uvs, triangles);
+		GenerateVertices(rowIndex, vertices, uvs, triangles, normals);
 		
 		GameObject newStrip = (GameObject) GameObject.Instantiate(meshPrefab);
 		
@@ -48,8 +49,8 @@ public class TerrainManager : MonoBehaviour {
         mesh.vertices = vertices;
         mesh.uv = uvs;
         mesh.triangles = triangles;
+		mesh.normals = normals;
 		mesh.RecalculateBounds();
-		mesh.RecalculateNormals();
 		newStrip.GetComponent<MeshFilter>().mesh = mesh;
 		
 		newStrip.renderer.material = snowMaterial;
@@ -61,7 +62,7 @@ public class TerrainManager : MonoBehaviour {
 		newStrip.transform.parent = transform;
 	}
 	
-	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles) {
+	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals) {
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) {
 			vertices[j] = VertexAtIndex(rowIndex, j);
@@ -74,6 +75,11 @@ public class TerrainManager : MonoBehaviour {
 		}
 		
 		TriangulateRow(triangles);
+	
+		for (int j = 0; j < kNumHorizontalVertices; j++) {
+			normals[j] = new Vector3(0, 1, 0);
+		}
+		
 	}
 	
 	void TriangulateRow(int[] triangles) {	
@@ -81,12 +87,12 @@ public class TerrainManager : MonoBehaviour {
 			int baseTriangleIndex = j * 6;
 			Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
 			triangles[baseTriangleIndex] = j;
-			triangles[baseTriangleIndex + 1] = j + 1;
-			triangles[baseTriangleIndex + 2] = j + kNumHorizontalVertices;	
+			triangles[baseTriangleIndex + 1] = j + kNumHorizontalVertices;
+			triangles[baseTriangleIndex + 2] = j + 1;	
 
 			triangles[baseTriangleIndex + 3] = j + kNumHorizontalVertices;
-			triangles[baseTriangleIndex + 4] = j + 1;
-			triangles[baseTriangleIndex + 5] = j + kNumHorizontalVertices + 1;		
+			triangles[baseTriangleIndex + 4] = j + kNumHorizontalVertices + 1;
+			triangles[baseTriangleIndex + 5] = j + 1;		
 		}
 	}
 	

@@ -33,6 +33,15 @@ public class TerrainManager : MonoBehaviour {
 	void Update () {
 		// if target.transform.position is w/n a distance from mLastRowIndex,
 		// remove top strip, add bottom strip
+		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
+		lastRowVertex.x = target.transform.position.x;
+		Vector3 distance = (lastRowVertex - target.transform.position);
+		Debug.Log("Distance " + distance.magnitude.ToString());
+		if (distance.magnitude < 40) {
+			Debug.Log("vertex " + lastRowVertex.ToString());
+			GenerateStrip(mLastRowIndex++);
+		}
+		
 	}
 	
 	void GenerateStrip(int rowIndex) {
@@ -90,7 +99,7 @@ public class TerrainManager : MonoBehaviour {
 	void TriangulateRow(int[] triangles) {	
 		for (int j = 0; j < kNumHorizontalVertices - 1; j++) {
 			int baseTriangleIndex = j * 6;
-			Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
+			//Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
 			triangles[baseTriangleIndex] = j;
 			triangles[baseTriangleIndex + 1] = j + kNumHorizontalVertices;
 			triangles[baseTriangleIndex + 2] = j + 1;	
@@ -112,7 +121,7 @@ public class TerrainManager : MonoBehaviour {
 		
 		v = v - Mathf.Floor(v);
 		Vector2 uv = new Vector2(u,v);
-		Debug.Log("UV " + uv.ToString());
+		//Debug.Log("UV " + uv.ToString());
 		return uv;	
 	}
 	

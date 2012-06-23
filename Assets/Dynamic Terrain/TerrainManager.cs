@@ -16,21 +16,21 @@ public class TerrainManager : MonoBehaviour {
 	
 	public Material snowMaterial;
 	
-  	public Vector3[] newVertices;
-    public Vector2[] newUV;
-    public int[] newTriangles;
+  	public Vector3[] mVertices;
+    public Vector2[] mUVs;
+    public int[] mTriangles;
 	
-	private int numHorizontalVertices = 11;
-	private int numVerticalVertices = 11;
+	const int kNumHorizontalVertices = 11;
+	const int kNumVerticalVertices = 11;
 	
 	void Start() {
     	GenerateVertices();
 		
 		Mesh mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        mesh.vertices = newVertices;
-        mesh.uv = newUV;
-        mesh.triangles = newTriangles;
+        mesh.vertices = mVertices;
+        mesh.uv = mUVs;
+        mesh.triangles = mTriangles;
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
 
@@ -48,55 +48,58 @@ public class TerrainManager : MonoBehaviour {
 	}
 	
 	void GenerateVertices() {
-		newVertices = new Vector3[numHorizontalVertices * numVerticalVertices];
-		newUV = new Vector2[numHorizontalVertices * numVerticalVertices];
-		newTriangles = new int[(numHorizontalVertices - 1) * (numVerticalVertices - 1) * 6];
+		mVertices = new Vector3[kNumHorizontalVertices * kNumVerticalVertices];
+		mUVs = new Vector2[kNumHorizontalVertices * kNumVerticalVertices];
+		mTriangles = new int[(kNumHorizontalVertices - 1) * (kNumVerticalVertices - 1) * 6];
 		
-		for (int i = 0; i < numVerticalVertices; i++) {
-			for (int j = 0; j < numHorizontalVertices; j++) {
-				newVertices[i * numVerticalVertices + j] = VertexAtIndex(i, j);
+		for (int i = 0; i < kNumVerticalVertices; i++) {
+			for (int j = 0; j < kNumHorizontalVertices; j++) {
+				mVertices[i * kNumVerticalVertices + j] = VertexAtIndex(i, j);
 			}
 		}
 		
-		for (int i = 0; i < numVerticalVertices; i++) {
-			for (int j = 0; j < numHorizontalVertices; j++) {
-				newUV[i * numVerticalVertices + j] = UVAtIndex(i, j);
+		for (int i = 0; i < kNumVerticalVertices; i++) {
+			for (int j = 0; j < kNumHorizontalVertices; j++) {
+				mUVs[i * kNumVerticalVertices + j] = UVAtIndex(i, j);
 			}
 		}
 		
-		for (int i = 0; i < numVerticalVertices - 1; i++) {
+		for (int i = 0; i < kNumVerticalVertices - 1; i++) {
 			TriangulateRow(i);
 		}
 	}
 	
 	void TriangulateRow(int triangleRowIndex) {	
-		for (int j = 0; j < numHorizontalVertices - 1; j++) {
-			int baseVertexIndex = triangleRowIndex * numHorizontalVertices + j; 
-			int baseTriangleIndex = (triangleRowIndex * (numHorizontalVertices - 1) + j) * 6;
+		for (int j = 0; j < kNumHorizontalVertices - 1; j++) {
+			int baseVertexIndex = triangleRowIndex * kNumHorizontalVertices + j; 
+			int baseTriangleIndex = (triangleRowIndex * (kNumHorizontalVertices - 1) + j) * 6;
 			Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
-			newTriangles[baseTriangleIndex] = baseVertexIndex;
-			newTriangles[baseTriangleIndex + 1] = baseVertexIndex + 1;
-			newTriangles[baseTriangleIndex + 2] = baseVertexIndex + numHorizontalVertices;	
+			mTriangles[baseTriangleIndex] = baseVertexIndex;
+			mTriangles[baseTriangleIndex + 1] = baseVertexIndex + 1;
+			mTriangles[baseTriangleIndex + 2] = baseVertexIndex + kNumHorizontalVertices;	
 
-			newTriangles[baseTriangleIndex + 3] = baseVertexIndex + numHorizontalVertices;
-			newTriangles[baseTriangleIndex + 4] = baseVertexIndex + 1;
-			newTriangles[baseTriangleIndex + 5] = baseVertexIndex + numHorizontalVertices + 1;		
+			mTriangles[baseTriangleIndex + 3] = baseVertexIndex + kNumHorizontalVertices;
+			mTriangles[baseTriangleIndex + 4] = baseVertexIndex + 1;
+			mTriangles[baseTriangleIndex + 5] = baseVertexIndex + kNumHorizontalVertices + 1;		
 		}
 	}
 	
 	Vector3 VertexAtIndex(int i, int j) {
 		// TODO randomize the y component to get a displacement map
-		return new Vector3((i -  Mathf.Floor(numVerticalVertices / 2)) * 10.0f, 0, (j - Mathf.Floor(numHorizontalVertices / 2)) * 10.0f);
+		return new Vector3((i -  Mathf.Floor(kNumVerticalVertices / 2)) * 10.0f, 0, (j - Mathf.Floor(kNumHorizontalVertices / 2)) * 10.0f);
 	}
 	
 	Vector2 UVAtIndex(int i, int j) {
-		return new Vector2( ((float)i)/((float)numVerticalVertices), ((float)j)/((float)numHorizontalVertices) );	
+		return new Vector2( ((float)i)/((float)kNumVerticalVertices), ((float)j)/((float)kNumHorizontalVertices) );	
 	}
 	
 	void ShiftVerticesDown() {
-		Vector3[] oldVertices = newVertices;
-		newVertices = new Vector3[oldVertices.Length];
+		Vector3[] oldVertices = mVertices;
+		Vector2[] oldUVs = mUVs;
+		mVertices = new Vector3[oldVertices.Length];
 		//  TODO
+		
+	
 	}
 	
 	bool ShouldLayoutNextRow() {

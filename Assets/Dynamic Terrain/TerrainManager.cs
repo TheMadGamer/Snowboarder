@@ -40,8 +40,9 @@ public class TerrainManager : MonoBehaviour {
     	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
     	int[] triangles = new int[(kNumHorizontalVertices - 1) * 6];
 		Vector3[] normals = new Vector3[kNumHorizontalVertices * 2];
-
-		GenerateVertices(rowIndex, vertices, uvs, triangles, normals);
+		Vector4[] tangents = new Vector4[kNumHorizontalVertices	* 2];
+		
+		GenerateVertices(rowIndex, vertices, uvs, triangles, normals, tangents);
 		
 		GameObject newStrip = (GameObject) GameObject.Instantiate(meshPrefab);
 		
@@ -50,6 +51,7 @@ public class TerrainManager : MonoBehaviour {
         mesh.uv = uvs;
         mesh.triangles = triangles;
 		mesh.normals = normals;
+		mesh.tangents = tangents;
 		mesh.RecalculateBounds();
 		newStrip.GetComponent<MeshFilter>().mesh = mesh;
 		
@@ -62,7 +64,7 @@ public class TerrainManager : MonoBehaviour {
 		newStrip.transform.parent = transform;
 	}
 	
-	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals) {
+	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) {
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) {
 			vertices[j] = VertexAtIndex(rowIndex, j);
@@ -71,15 +73,18 @@ public class TerrainManager : MonoBehaviour {
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) {
 			uvs[j] = UVAtIndex(rowIndex, j);
-			uvs[j + kNumHorizontalVertices] = UVAtIndex(rowIndex + 1, j);
+			uvs[j + kNumHorizontalVertices] = new Vector2(uvs[j].x, uvs[j].y + (1.0f/(float)kNumVerticalVertices));
 		}
 		
 		TriangulateRow(triangles);
 	
 		for (int j = 0; j < kNumHorizontalVertices; j++) {
 			normals[j] = new Vector3(0, 1, 0);
+			normals[j + kNumHorizontalVertices] = new Vector3(0, 1, 0);	
+			
+			tangents[j] = new Vector4(-1, 0, 0, 1);		
+			tangents[j + kNumHorizontalVertices] = new Vector4(-1, 0, 0, 1);
 		}
-		
 	}
 	
 	void TriangulateRow(int[] triangles) {	
@@ -102,10 +107,13 @@ public class TerrainManager : MonoBehaviour {
 	}
 	
 	Vector2 UVAtIndex(int i, int j) {
-		float u = ((float)j)/((float)kNumHorizontalVertices);
+		float u = ((float)j)/((float)kNumHorizontalVertices - 1);
 		float v =  ((float)i)/((float)kNumVerticalVertices);
+		
 		v = v - Mathf.Floor(v);
-		return new Vector2(u,v);	
+		Vector2 uv = new Vector2(u,v);
+		Debug.Log("UV " + uv.ToString());
+		return uv;	
 	}
 	
 	

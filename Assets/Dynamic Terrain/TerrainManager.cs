@@ -14,93 +14,94 @@ public class TerrainManager : MonoBehaviour {
 	// The target transform - the mesh is recentered around this object every Update
 	public GameObject target;
 	
+	public GameObject meshPrefab;
+	
 	public Material snowMaterial;
-	
-  	public Vector3[] mVertices;
-    public Vector2[] mUVs;
-    public int[] mTriangles;
-	
+		
 	const int kNumHorizontalVertices = 11;
 	const int kNumVerticalVertices = 11;
+	int mLastRowIndex = 0;
 	
 	void Start() {
-    	GenerateVertices();
+		
+		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) {
+			GenerateStrip(i);		
+		}
+		mLastRowIndex = (kNumVerticalVertices / 2);
+    }
+	
+	void Update () {
+		// if target.transform.position is w/n a distance from mLastRowIndex,
+		// remove top strip, add bottom strip
+	}
+	
+	void GenerateStrip(int rowIndex) {
+		Vector3[] vertices = new Vector3[kNumHorizontalVertices * 2];
+    	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
+    	int[] triangles = new int[(kNumHorizontalVertices - 1) * 6];
+
+		GenerateVertices(rowIndex, vertices, uvs, triangles);
+		
+		GameObject newStrip = (GameObject) GameObject.Instantiate(meshPrefab);
 		
 		Mesh mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-        mesh.vertices = mVertices;
-        mesh.uv = mUVs;
-        mesh.triangles = mTriangles;
+        mesh.vertices = vertices;
+        mesh.uv = uvs;
+        mesh.triangles = triangles;
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
-
-		renderer.material = snowMaterial;
+		newStrip.GetComponent<MeshFilter>().mesh = mesh;
 		
-		MeshCollider meshCollider = GetComponent<MeshCollider>();
-		// Create a new mesh for the mesh collider and a grid mesh to reference it
-		meshCollider = GetComponent<MeshCollider>();
-		meshCollider.sharedMesh = mesh;
+		newStrip.renderer.material = snowMaterial;
 		
-    }
-	// Update is called once per frame
-	void Update () {
-
+		// Create a new mesh for the mesh collider
+		newStrip.GetComponent<MeshCollider>().sharedMesh = mesh;
+		
+		// Parent to this.
+		newStrip.transform.parent = transform;
 	}
 	
-	void GenerateVertices() {
-		mVertices = new Vector3[kNumHorizontalVertices * kNumVerticalVertices];
-		mUVs = new Vector2[kNumHorizontalVertices * kNumVerticalVertices];
-		mTriangles = new int[(kNumHorizontalVertices - 1) * (kNumVerticalVertices - 1) * 6];
+	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles) {
 		
-		for (int i = 0; i < kNumVerticalVertices; i++) {
-			for (int j = 0; j < kNumHorizontalVertices; j++) {
-				mVertices[i * kNumVerticalVertices + j] = VertexAtIndex(i, j);
-			}
+		for (int j = 0; j < kNumHorizontalVertices; j++) {
+			vertices[j] = VertexAtIndex(rowIndex, j);
+			vertices[j + kNumHorizontalVertices] = VertexAtIndex(rowIndex + 1, j);
 		}
 		
-		for (int i = 0; i < kNumVerticalVertices; i++) {
-			for (int j = 0; j < kNumHorizontalVertices; j++) {
-				mUVs[i * kNumVerticalVertices + j] = UVAtIndex(i, j);
-			}
+		for (int j = 0; j < kNumHorizontalVertices; j++) {
+			uvs[j] = UVAtIndex(rowIndex, j);
+			uvs[j + kNumHorizontalVertices] = UVAtIndex(rowIndex + 1, j);
 		}
 		
-		for (int i = 0; i < kNumVerticalVertices - 1; i++) {
-			TriangulateRow(i);
-		}
+		TriangulateRow(triangles);
 	}
 	
-	void TriangulateRow(int triangleRowIndex) {	
+	void TriangulateRow(int[] triangles) {	
 		for (int j = 0; j < kNumHorizontalVertices - 1; j++) {
-			int baseVertexIndex = triangleRowIndex * kNumHorizontalVertices + j; 
-			int baseTriangleIndex = (triangleRowIndex * (kNumHorizontalVertices - 1) + j) * 6;
+			int baseTriangleIndex = j * 6;
 			Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
-			mTriangles[baseTriangleIndex] = baseVertexIndex;
-			mTriangles[baseTriangleIndex + 1] = baseVertexIndex + 1;
-			mTriangles[baseTriangleIndex + 2] = baseVertexIndex + kNumHorizontalVertices;	
+			triangles[baseTriangleIndex] = j;
+			triangles[baseTriangleIndex + 1] = j + 1;
+			triangles[baseTriangleIndex + 2] = j + kNumHorizontalVertices;	
 
-			mTriangles[baseTriangleIndex + 3] = baseVertexIndex + kNumHorizontalVertices;
-			mTriangles[baseTriangleIndex + 4] = baseVertexIndex + 1;
-			mTriangles[baseTriangleIndex + 5] = baseVertexIndex + kNumHorizontalVertices + 1;		
+			triangles[baseTriangleIndex + 3] = j + kNumHorizontalVertices;
+			triangles[baseTriangleIndex + 4] = j + 1;
+			triangles[baseTriangleIndex + 5] = j + kNumHorizontalVertices + 1;		
 		}
 	}
 	
 	Vector3 VertexAtIndex(int i, int j) {
 		// TODO randomize the y component to get a displacement map
-		return new Vector3((i -  Mathf.Floor(kNumVerticalVertices / 2)) * 10.0f, 0, (j - Mathf.Floor(kNumHorizontalVertices / 2)) * 10.0f);
+		return new Vector3((j - Mathf.Floor(kNumHorizontalVertices / 2)) * 10.0f, 0, i * 10.0f);
 	}
 	
 	Vector2 UVAtIndex(int i, int j) {
-		return new Vector2( ((float)i)/((float)kNumVerticalVertices), ((float)j)/((float)kNumHorizontalVertices) );	
+		float u = ((float)j)/((float)kNumHorizontalVertices);
+		float v =  ((float)i)/((float)kNumVerticalVertices);
+		v = v - Mathf.Floor(v);
+		return new Vector2(u,v);	
 	}
 	
-	void ShiftVerticesDown() {
-		Vector3[] oldVertices = mVertices;
-		Vector2[] oldUVs = mUVs;
-		mVertices = new Vector3[oldVertices.Length];
-		//  TODO
-		
-	
-	}
 	
 	bool ShouldLayoutNextRow() {
 

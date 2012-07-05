@@ -6,7 +6,7 @@
       <File FileName="Assets/Behavior/SnowboardLocalController.cs" Line="1" Column="1" />
       <File FileName="Assets/Dynamic Terrain/JumpGenerator.cs" Line="1" Column="1" />
       <File FileName="Assets/Dynamic Terrain/HillGenerator.cs" Line="1" Column="1" />
-      <File FileName="Assets/Dynamic Terrain/TerrainManager.cs" Line="47" Column="1" />
+      <File FileName="Assets/Dynamic Terrain/TerrainManager.cs" Line="40" Column="29" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

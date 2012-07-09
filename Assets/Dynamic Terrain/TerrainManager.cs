@@ -36,9 +36,7 @@ public class TerrainManager : MonoBehaviour {
 		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
 		lastRowVertex.x = target.transform.position.x;
 		Vector3 distance = (lastRowVertex - target.transform.position);
-		Debug.Log("Distance " + distance.magnitude.ToString());
 		if (distance.magnitude < 40) {
-			Debug.Log("vertex " + lastRowVertex.ToString());
 			GenerateStrip(mLastRowIndex++);
 		}
 		
@@ -69,6 +67,11 @@ public class TerrainManager : MonoBehaviour {
 		// Create a new mesh for the mesh collider
 		newStrip.GetComponent<MeshCollider>().sharedMesh = mesh;
 		
+		Vector3 position = transform.forward;
+		position *= rowIndex * 10;
+		
+		newStrip.transform.position = position;
+		
 		// Parent to this.
 		newStrip.transform.parent = transform;
 	}
@@ -76,8 +79,8 @@ public class TerrainManager : MonoBehaviour {
 	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) {
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) {
-			vertices[j] = VertexAtIndex(rowIndex, j);
-			vertices[j + kNumHorizontalVertices] = VertexAtIndex(rowIndex + 1, j);
+			vertices[j] = VertexAtIndex(0, j);
+			vertices[j + kNumHorizontalVertices] = VertexAtIndex(1, j);
 		}
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) {

@@ -14,7 +14,7 @@ var target : Transform;
 // The distance in the x-z plane to the target
 var distance = 10.0;
 // the height we want the camera to be above the target
-var height = 5.0;
+var height = 3.0;
 // How much we 
 var heightDamping = 2.0;
 var rotationDamping = 3.0;
@@ -33,7 +33,8 @@ function LateUpdate () {
 	// Calculate the current rotation angles
 	var wantedRotationAngle : float = target.eulerAngles.y + rotationOffset;
 	var wantedHeight : float = target.position.y + height;
-		
+	Debug.Log("Wanted height " + wantedHeight.ToString());
+	
 	var currentRotationAngle : float = transform.eulerAngles.y;
 	var currentHeight : float = transform.position.y;
 	

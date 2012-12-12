@@ -118,6 +118,10 @@ public class SnowboardController : MonoBehaviour
 	private int mLayerMask = 0;
 	public int LayerMask { get { return mLayerMask;}}
 	
+	public Vector3 InitialVelocity = new Vector3(0, 0, 0);
+	
+	public float MinSpeed = 10.0f;
+	
 	public void Start()
 	{
 		
@@ -240,6 +244,12 @@ public class SnowboardController : MonoBehaviour
 			// Note that this is a modified integration scheme
 			mVelocity = mActualVelocity.normalized * speed;
 		}
+		
+		// This ensures a minimum start speed.
+		if (mVelocity.magnitude > 0.1f && mVelocity.magnitude < MinSpeed) {
+			mVelocity = mVelocity.normalized * MinSpeed;	
+		}
+		
 	}
 	
 	/// <summary>

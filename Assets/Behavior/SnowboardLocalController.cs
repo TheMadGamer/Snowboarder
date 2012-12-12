@@ -5,18 +5,6 @@ public class SnowboardLocalController : SnowboardController
 {
 	//private GroundTrail groundTrails;
 	private GameObject[] snowParticles;
-	
-	new void Start()
-	{
-		base.Start();
-		//groundTrails = GetComponentInChildren<GroundTrail>();
-		
-//		snowParticles = GetComponentInChildren("SnowParticles");
-	}
-	
-	public void Setup()
-	{
-	}
 
 	public void Update()
 	{

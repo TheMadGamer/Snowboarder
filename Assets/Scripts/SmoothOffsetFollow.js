@@ -13,14 +13,15 @@ Then we apply the smoothed values to the transform's position.
 var target : Transform;
 
 // The distance in the x-z plane to the target.
-var distance = 10.0;
+var distance : float = 10.0;
 
 // The height we want the camera to be above the target.
-var cameraHeight = 3.0;
+var cameraHeight : float = 3.0;
 
-var heightDamping = 2.0;
-var rotationDamping = 3.0;
-var rotationOffset = 0.0;
+var heightDamping : float = 2.0;
+var rotationDamping : float = 3.0;
+var rotationOffset : float = 0.0;
+var lookVerticalOffset : float = 2.0f;
 
 // Place the script in the Camera-Control group in the component menu.
 @script AddComponentMenu("Camera-Control/Smooth Follow")
@@ -50,5 +51,6 @@ function LateUpdate () {
 	transform.position.y = wantedHeight;
 	
 	// Always look at the target.
-	transform.LookAt(target);
+	var targetLook : Vector3 = target.position + new Vector3(0, lookVerticalOffset, 0);
+	transform.LookAt(targetLook);
 }

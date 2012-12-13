@@ -6,12 +6,16 @@ using System.Collections;
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
 
+// Terrain generation manager.  Creates rows of terrain as the target (snowboarder)
+// gets closer.
+// TODO: create an undulation noise pattern.
+// TODO: create side panels as needed.
 public class TerrainManager : MonoBehaviour {
 	
 	public GameObject rock;
 	public GameObject tree;
 	
-	// The target transform - the mesh is recentered around this object every Update
+	// The target transform - the mesh is recentered around this object every Update.
 	public GameObject target;
 	
 	public GameObject meshPrefab;
@@ -21,35 +25,58 @@ public class TerrainManager : MonoBehaviour {
 	const int kNumHorizontalVertices = 11;
 	const int kNumVerticalVertices = 11;
 	int mLastRowIndex = 0;
+	public float MinGenerationDistance = 40;
 	
-	void Start() {
+	// Each quad has a row, column that define it's location.
+	class Quad {
+	    public int row;
+		public int column;
+		public GameObject mesh;
 		
-		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) {
+		public static Quad BuildQuad(int row, int column) {
+			Quad q = new Quad();
+			q.row = row;
+			q.column = column;
+			// TODO build a mesh, move it.
+			return null;
+		}
+	}
+	
+	void Start() 
+	{
+		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) 
+		{
 			GenerateStrip(i);		
 		}
 		mLastRowIndex = (kNumVerticalVertices / 2);
     }
 	
-	void Update () {
+	void Update () 
+	{
 		// if target.transform.position is w/n a distance from mLastRowIndex,
 		// remove top strip, add bottom strip
 		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
 		lastRowVertex.x = target.transform.position.x;
 		Vector3 distance = (lastRowVertex - target.transform.position);
-		if (distance.magnitude < 40) {
-			GenerateStrip(mLastRowIndex++);
-		}
+
+		// TODO: compute row and column indices from transform position.
 		
+		if (distance.magnitude < MinGenerationDistance) 
+		{
+			GenerateStrip(mLastRowIndex++, 0);
+		}
 	}
 	
-	void GenerateStrip(int rowIndex) {
+	// Generates a strip of vertices, then positions the strip, parents to |transform|.
+	void GenerateStrip(int rowIndex, int columnIndex) 
+	{
 		Vector3[] vertices = new Vector3[kNumHorizontalVertices * 2];
     	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
     	int[] triangles = new int[(kNumHorizontalVertices - 1) * 6];
 		Vector3[] normals = new Vector3[kNumHorizontalVertices * 2];
 		Vector4[] tangents = new Vector4[kNumHorizontalVertices	* 2];
 		
-		GenerateVertices(rowIndex, vertices, uvs, triangles, normals, tangents);
+		GenerateVertices(rowIndex, columnIndex, vertices, uvs, triangles, normals, tangents);
 		
 		GameObject newStrip = (GameObject) GameObject.Instantiate(meshPrefab);
 		
@@ -76,21 +103,26 @@ public class TerrainManager : MonoBehaviour {
 		newStrip.transform.parent = transform;
 	}
 	
-	void GenerateVertices(int rowIndex, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) {
+	// Generates a strip of vertices at a given location defined by row index.
+	void GenerateVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
+	{
 		
-		for (int j = 0; j < kNumHorizontalVertices; j++) {
+		for (int j = 0; j < kNumHorizontalVertices; j++) 
+		{
 			vertices[j] = VertexAtIndex(0, j);
 			vertices[j + kNumHorizontalVertices] = VertexAtIndex(1, j);
 		}
 		
-		for (int j = 0; j < kNumHorizontalVertices; j++) {
-			uvs[j] = UVAtIndex(rowIndex, j);
+		for (int j = 0; j < kNumHorizontalVertices; j++) 
+		{
+			uvs[j] = UVAtIndex(rowTile, j);
 			uvs[j + kNumHorizontalVertices] = new Vector2(uvs[j].x, uvs[j].y + (1.0f/(float)kNumVerticalVertices));
 		}
 		
 		TriangulateRow(triangles);
 	
-		for (int j = 0; j < kNumHorizontalVertices; j++) {
+		for (int j = 0; j < kNumHorizontalVertices; j++) 
+		{
 			normals[j] = new Vector3(0, 1, 0);
 			normals[j + kNumHorizontalVertices] = new Vector3(0, 1, 0);	
 			
@@ -99,8 +131,10 @@ public class TerrainManager : MonoBehaviour {
 		}
 	}
 	
-	void TriangulateRow(int[] triangles) {	
-		for (int j = 0; j < kNumHorizontalVertices - 1; j++) {
+	void TriangulateRow(int[] triangles) 
+	{	
+		for (int j = 0; j < kNumHorizontalVertices - 1; j++) 
+		{
 			int baseTriangleIndex = j * 6;
 			//Debug.Log( "BaseTriangleIndex " + baseTriangleIndex.ToString());
 			triangles[baseTriangleIndex] = j;
@@ -113,12 +147,14 @@ public class TerrainManager : MonoBehaviour {
 		}
 	}
 	
-	Vector3 VertexAtIndex(int i, int j) {
+	Vector3 VertexAtIndex(int i, int j) 
+	{
 		// TODO randomize the y component to get a displacement map
 		return new Vector3((j - Mathf.Floor(kNumHorizontalVertices / 2)) * 10.0f, 0, i * 10.0f);
 	}
 	
-	Vector2 UVAtIndex(int i, int j) {
+	Vector2 UVAtIndex(int i, int j) 
+	{
 		float u = ((float)j)/((float)kNumHorizontalVertices - 1);
 		float v =  ((float)i)/((float)kNumVerticalVertices);
 		
@@ -129,7 +165,8 @@ public class TerrainManager : MonoBehaviour {
 	}
 	
 	
-	bool ShouldLayoutNextRow() {
+	bool ShouldLayoutNextRow() 
+	{
 
 		// If target is too close to edge, layout next level.
 		return false;

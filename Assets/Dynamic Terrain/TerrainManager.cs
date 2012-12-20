@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -27,44 +27,122 @@ public class TerrainManager : MonoBehaviour {
 	int mLastRowIndex = 0;
 	public float MinGenerationDistance = 40;
 	
+	public Hashtable TileMap;
+	
 	// Each quad has a row, column that define it's location.
-	class Quad {
+	class Tile {
 	    public int row;
 		public int column;
 		public GameObject mesh;
 		
-		public static Quad BuildQuad(int row, int column) {
-			Quad q = new Quad();
-			q.row = row;
-			q.column = column;
+		const float width = 100f;
+		const float height = 100f;
+		
+		public static Tile BuildTile(int row, int column) 
+		{
+			Tile t = new Tile();
+			t.row = row;
+			t.column = column;
+			
 			// TODO build a mesh, move it.
-			return null;
+			
+			return t;
 		}
 	}
 	
 	void Start() 
+	{
+		UpdateTiles();
+    }
+	
+	void Update () 
+	{
+		UpdateTiles();
+	}
+
+	void UpdateTiles() 
+	{
+		// If target.transform.position is close to where a tile will be, build the tile.
+		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
+		lastRowVertex.x = target.transform.position.x;
+		Vector3 distance = (lastRowVertex - target.transform.position);
+
+		// For each tile, if not cached, build.
+		List<Tuple<int, int>> neededTiles = GetListOfNeededTiles();
+		foreach (Tuple<int, int> tileInds in neededTiles) 
+		{
+			if (! TileMap.contains(tileInds)) 
+			{
+				Debug.Log("Adding tile " + tileInds.toString());
+				Tile tile = GenerateTile(tileInds.first, tileInds.second);
+				TileMap.put(inds, tile);
+			}		
+		}
+		
+		// TODO: compute row and column indices from transform position.		
+		//if (distance.magnitude < MinGenerationDistance) 
+		//{
+		//	GenerateStrip(mLastRowIndex++, 0);
+		//}
+
+	}
+	
+	List<Tuple<int, int>> GetListOfNeededTiles(Vector3 position) 
+	{
+		return null;
+	}
+	
+	void GenerateTile(int row, int column) 
+	{
+		Vector3[] vertices = new Vector3[kNumHorizontalVertices * 2];
+    	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
+    	int[] triangles = new int[(kNumHorizontalVertices - 1) * 6];
+		Vector3[] normals = new Vector3[kNumHorizontalVertices * 2];
+		Vector4[] tangents = new Vector4[kNumHorizontalVertices	* 2];
+		
+		GenerateQuadVertices(rowIndex, columnIndex, vertices, uvs, triangles, normals, tangents);
+		
+		GameObject newQuad = (GameObject) GameObject.Instantiate(meshPrefab);
+		
+		Mesh mesh = new Mesh();
+        mesh.vertices = vertices;
+        mesh.uv = uvs;
+        mesh.triangles = triangles;
+		mesh.normals = normals;
+		mesh.tangents = tangents;
+		mesh.RecalculateBounds();
+		newQuad.GetComponent<MeshFilter>().mesh = mesh;
+		
+		newQuad.renderer.material = snowMaterial;
+		
+		// Create a new mesh for the mesh collider
+		newQuad.GetComponent<MeshCollider>().sharedMesh = mesh;
+		
+		//TODO: Fix this for quad logic.
+		Vector3 position = transform.forward;
+		position *= rowIndex * 10;
+		
+		newQuad.transform.position = position;
+		
+		// Parent to this.
+		newQuad.transform.parent = transform;
+
+	}
+	
+	void GenerateQuadVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
+	{
+		
+		
+	}
+
+
+	void GenerateInitialStrip() 
 	{
 		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) 
 		{
 			GenerateStrip(i);		
 		}
 		mLastRowIndex = (kNumVerticalVertices / 2);
-    }
-	
-	void Update () 
-	{
-		// if target.transform.position is w/n a distance from mLastRowIndex,
-		// remove top strip, add bottom strip
-		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
-		lastRowVertex.x = target.transform.position.x;
-		Vector3 distance = (lastRowVertex - target.transform.position);
-
-		// TODO: compute row and column indices from transform position.
-		
-		if (distance.magnitude < MinGenerationDistance) 
-		{
-			GenerateStrip(mLastRowIndex++, 0);
-		}
 	}
 	
 	// Generates a strip of vertices, then positions the strip, parents to |transform|.
@@ -101,10 +179,10 @@ public class TerrainManager : MonoBehaviour {
 		
 		// Parent to this.
 		newStrip.transform.parent = transform;
-	}
+	}	
 	
 	// Generates a strip of vertices at a given location defined by row index.
-	void GenerateVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
+	void GenerateStripVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
 	{
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) 

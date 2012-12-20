@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -27,31 +27,68 @@ public class TerrainManager : MonoBehaviour {
 	int mLastRowIndex = 0;
 	public float MinGenerationDistance = 40;
 	
-	// Each quad has a row, column that define it's location.
-	class Quad {
-	    public int row;
-		public int column;
-		public GameObject mesh;
-		
-		public static Quad BuildQuad(int row, int column) {
-			Quad q = new Quad();
-			q.row = row;
-			q.column = column;
-			// TODO build a mesh, move it.
-			return null;
+	public Hashtable TileMap = new Hashtable();
+	
+	public class TileInds {
+		private int x;
+		private int y;
+		public int X { get{ return x; } }
+		public int Y { get{ return y; } }
+		public TileInds(int x, int y) 
+		{
+			this.x = x;
+			this.y = y;
 		}
 	}
 	
 	void Start() 
 	{
-		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) 
-		{
-			GenerateStrip(i);		
-		}
-		mLastRowIndex = (kNumVerticalVertices / 2);
+		UpdateTiles();
     }
 	
 	void Update () 
+	{
+		UpdateTiles();
+	}
+	
+	void UpdateTiles() 
+	{
+		List<TileInds> inds = 
+			GetNeededTiles(target.transform.position.x, target.transform.position.z);
+		foreach (TileInds tile in inds) 
+		{
+			if (!TileMap.ContainsKey(tile)) 
+			{
+				TileMap.Add(tile);
+				GenerateQuad(tile);	
+			}
+		}	
+	}
+	
+	List<TileInds> GetNeededTiles(float x, float z) 
+	{
+		List<TileInds> inds = new List<TileInds>();
+		int row = (int) x / 100;
+		int col = (int) z / 100;
+		
+		inds.Add(new TileInds(row, col));
+		return inds;
+	}
+	
+	void GenerateQuad(TileInds tile) 
+	{
+		
+	}
+	
+	void IntializeStrip() {
+		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) 
+		{
+			GenerateStrip(i, 0);		
+		}
+		mLastRowIndex = (kNumVerticalVertices / 2);
+	}
+	
+	void UpdateStrips() 
 	{
 		// if target.transform.position is w/n a distance from mLastRowIndex,
 		// remove top strip, add bottom strip

@@ -27,26 +27,17 @@ public class TerrainManager : MonoBehaviour {
 	int mLastRowIndex = 0;
 	public float MinGenerationDistance = 40;
 	
-	public Hashtable TileMap;
+	public Hashtable TileMap = new Hashtable();
 	
-	// Each quad has a row, column that define it's location.
-	class Tile {
-	    public int row;
-		public int column;
-		public GameObject mesh;
-		
-		const float width = 100f;
-		const float height = 100f;
-		
-		public static Tile BuildTile(int row, int column) 
+	public class TileInds {
+		private int x;
+		private int y;
+		public int X { get{ return x; } }
+		public int Y { get{ return y; } }
+		public TileInds(int x, int y) 
 		{
-			Tile t = new Tile();
-			t.row = row;
-			t.column = column;
-			
-			// TODO build a mesh, move it.
-			
-			return t;
+			this.x = x;
+			this.y = y;
 		}
 	}
 	
@@ -55,44 +46,50 @@ public class TerrainManager : MonoBehaviour {
 		UpdateTiles();
     }
 	
-	void Update () 
+	void Update() 
 	{
 		UpdateTiles();
 	}
-
+	
 	void UpdateTiles() 
 	{
-		// If target.transform.position is close to where a tile will be, build the tile.
-		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
-		lastRowVertex.x = target.transform.position.x;
-		Vector3 distance = (lastRowVertex - target.transform.position);
-
-		// For each tile, if not cached, build.
-		List<Tuple<int, int>> neededTiles = GetListOfNeededTiles();
-		foreach (Tuple<int, int> tileInds in neededTiles) 
+		List<TileInds> inds = 
+			GetNeededTiles(target.transform.position.x, target.transform.position.z);
+		foreach (TileInds tileInds in inds) 
 		{
-			if (! TileMap.contains(tileInds)) 
+			if (!TileMap.ContainsKey(tileInds)) 
 			{
-				Debug.Log("Adding tile " + tileInds.toString());
-				Tile tile = GenerateTile(tileInds.first, tileInds.second);
-				TileMap.put(inds, tile);
-			}		
-		}
-		
-		// TODO: compute row and column indices from transform position.		
-		//if (distance.magnitude < MinGenerationDistance) 
-		//{
-		//	GenerateStrip(mLastRowIndex++, 0);
-		//}
-
+				GameObject tile = GenerateQuad(tileInds);	
+				TileMap.Add(tileInds, tile);
+				
+				// Parent to this.
+				tile.transform.parent = transform;
+			}
+		}	
 	}
 	
-	List<Tuple<int, int>> GetListOfNeededTiles(Vector3 position) 
+	List<TileInds> GetNeededTiles(float x, float z) 
 	{
-		return null;
+		List<TileInds> inds = new List<TileInds>();
+		int row = (int) x / 100;
+		int col = (int) z / 100;
+
+		inds.Add(new TileInds(row - 1, col - 1));
+		inds.Add(new TileInds(row, col - 1));
+		inds.Add(new TileInds(row + 1, col - 1));
+
+		inds.Add(new TileInds(row - 1, col));
+		inds.Add(new TileInds(row, col));
+		inds.Add(new TileInds(row + 1, col));
+
+		inds.Add(new TileInds(row - 1, col + 1));
+		inds.Add(new TileInds(row, col + 1));
+		inds.Add(new TileInds(row + 1, col + 1));
+
+		return inds;
 	}
 	
-	void GenerateTile(int row, int column) 
+	GameObject GenerateQuad(TileInds tile)  
 	{
 		Vector3[] vertices = new Vector3[kNumHorizontalVertices * 2];
     	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
@@ -100,7 +97,7 @@ public class TerrainManager : MonoBehaviour {
 		Vector3[] normals = new Vector3[kNumHorizontalVertices * 2];
 		Vector4[] tangents = new Vector4[kNumHorizontalVertices	* 2];
 		
-		GenerateQuadVertices(rowIndex, columnIndex, vertices, uvs, triangles, normals, tangents);
+		GenerateQuadVertices(tile.X, tile.Y, vertices, uvs, triangles, normals, tangents);
 		
 		GameObject newQuad = (GameObject) GameObject.Instantiate(meshPrefab);
 		
@@ -120,21 +117,44 @@ public class TerrainManager : MonoBehaviour {
 		
 		//TODO: Fix this for quad logic.
 		Vector3 position = transform.forward;
-		position *= rowIndex * 10;
+		position *= tile.X * 10;
 		
 		newQuad.transform.position = position;
 		
-		// Parent to this.
-		newQuad.transform.parent = transform;
-
+		return newQuad;
 	}
 	
-	void GenerateQuadVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
+	void GenerateQuadVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs,
+		int[] triangles, Vector3[] normals, Vector4[] tangents) 
 	{
 		
 		
 	}
+	
+	
+	void IntializeStrip() 
+	{
+		for (int i = -(kNumVerticalVertices / 2); i < (kNumVerticalVertices / 2); i++) 
+		{
+			GenerateStrip(i);		
+		}
+		mLastRowIndex = (kNumVerticalVertices / 2);
+	}
+	
+	void UpdateStrips() 
+	{
+		// If target.transform.position is close to where a tile will be, build the tile.
+		Vector3 lastRowVertex =  this.transform.TransformPoint(VertexAtIndex(mLastRowIndex, 0));
+		lastRowVertex.x = target.transform.position.x;
+		Vector3 distance = (lastRowVertex - target.transform.position);
+		
+		// TODO: compute row and column indices from transform position.		
+		//if (distance.magnitude < MinGenerationDistance) 
+		//{
+		//	GenerateStrip(mLastRowIndex++);
+		//}
 
+	}
 
 	void GenerateInitialStrip() 
 	{
@@ -146,7 +166,7 @@ public class TerrainManager : MonoBehaviour {
 	}
 	
 	// Generates a strip of vertices, then positions the strip, parents to |transform|.
-	void GenerateStrip(int rowIndex, int columnIndex) 
+	void GenerateStrip(int rowIndex) 
 	{
 		Vector3[] vertices = new Vector3[kNumHorizontalVertices * 2];
     	Vector2[] uvs = new Vector2[kNumHorizontalVertices * 2];
@@ -154,7 +174,7 @@ public class TerrainManager : MonoBehaviour {
 		Vector3[] normals = new Vector3[kNumHorizontalVertices * 2];
 		Vector4[] tangents = new Vector4[kNumHorizontalVertices	* 2];
 		
-		GenerateVertices(rowIndex, columnIndex, vertices, uvs, triangles, normals, tangents);
+		GenerateStripVertices(rowIndex, vertices, uvs, triangles, normals, tangents);
 		
 		GameObject newStrip = (GameObject) GameObject.Instantiate(meshPrefab);
 		
@@ -182,7 +202,7 @@ public class TerrainManager : MonoBehaviour {
 	}	
 	
 	// Generates a strip of vertices at a given location defined by row index.
-	void GenerateStripVertices(int rowTile, int columnTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
+	void GenerateStripVertices(int rowTile, Vector3[] vertices, Vector2[] uvs, int[] triangles, Vector3[] normals, Vector4[] tangents) 
 	{
 		
 		for (int j = 0; j < kNumHorizontalVertices; j++) 

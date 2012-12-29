@@ -65,11 +65,9 @@ public class TerrainManager : MonoBehaviour {
 	
 	void UpdateTiles() 
 	{
-		Debug.Log("Updating tiles");
 		
 		List<TileInds> inds = 
 			GetNeededTiles(target.transform.position.x, target.transform.position.z);
-		Debug.Log("Needed tiles : " + inds.Count);
 		
 		foreach (TileInds tileInds in inds) 
 		{
@@ -80,7 +78,7 @@ public class TerrainManager : MonoBehaviour {
 				TileMap.Add(tileInds, tile);
 				
 				// Parent to this.
-				tile.transform.parent = transform;
+				//tile.transform.parent = transform;
 			}
 		}	
 	}
@@ -133,8 +131,7 @@ public class TerrainManager : MonoBehaviour {
 		newQuad.GetComponent<MeshCollider>().sharedMesh = mesh;
 		
 		//TODO: Fix this for quad logic.
-		Vector3 position = transform.forward;
-		position *= tile.X * 10;
+		Vector3 position = new Vector3(tile.X * 100, 0, tile.Y * 100);
 		
 		newQuad.transform.position = position;
 		
@@ -149,10 +146,10 @@ public class TerrainManager : MonoBehaviour {
 		float quadMinZ = quadZ * 100;
 		float quadMaxZ = (quadZ + 1) * 100;	
 		
-		vertices[0] = GetVertexForXZ(quadMinX, quadMinZ);
-		vertices[1] = GetVertexForXZ(quadMaxX, quadMinZ);
-		vertices[2] = GetVertexForXZ(quadMinX, quadMaxZ);
-		vertices[3] = GetVertexForXZ(quadMaxX, quadMaxZ);
+		vertices[0] = new Vector3(0, -quadZ * 100, 0);
+		vertices[1] = new Vector3(100, -quadZ * 100, 0);
+		vertices[2] = new Vector3(0, -(quadZ + 1) * 100, 100);
+		vertices[3] = new Vector3(100, -(quadZ + 1) * 100, 100);
 		
 		for (int j = 0; j < kNumQuadSideVertices; j++) 
 		{
@@ -204,12 +201,4 @@ public class TerrainManager : MonoBehaviour {
 		//Debug.Log("UV " + uv.ToString());
 		return uv;	
 	}
-	
-	
-	bool ShouldLayoutNextRow() 
-	{
-
-		// If target is too close to edge, layout next level.
-		return false;
-	}	
 }

@@ -55,6 +55,7 @@ public class TerrainManager : MonoBehaviour {
 	
 	void Start() 
 	{
+		rock.transform.position = new Vector3();
 		UpdateTiles();
     }
 	
@@ -65,7 +66,6 @@ public class TerrainManager : MonoBehaviour {
 	
 	void UpdateTiles() 
 	{
-		
 		List<TileInds> inds = 
 			GetNeededTiles(target.transform.position.x, target.transform.position.z);
 		
@@ -84,23 +84,18 @@ public class TerrainManager : MonoBehaviour {
 	}
 	
 	List<TileInds> GetNeededTiles(float x, float z) 
-	{
+	{		
 		List<TileInds> inds = new List<TileInds>();
-		int row = (int) (x / kTileSpan);
-		int col = (int) (z / kTileSpan);
-
-		inds.Add(new TileInds(row - 1, col - 1));
-		inds.Add(new TileInds(row, col - 1));
-		inds.Add(new TileInds(row + 1, col - 1));
-
-		inds.Add(new TileInds(row - 1, col));
-		inds.Add(new TileInds(row, col));
-		inds.Add(new TileInds(row + 1, col));
-
-		inds.Add(new TileInds(row - 1, col + 1));
-		inds.Add(new TileInds(row, col + 1));
-		inds.Add(new TileInds(row + 1, col + 1));
-
+		int row = (int) Mathf.Round(x / kTileSpan) - 1;
+		int col = (int) Mathf.Round(z / kTileSpan) - 1;
+		
+		for (int r = -2; r <= 2; r++) 
+		{
+			for (int c = -2; c <= 2; c++) 
+			{
+				inds.Add(new TileInds(row + r, col + c));
+			}
+		}
 		return inds;
 	}
 	
@@ -131,20 +126,29 @@ public class TerrainManager : MonoBehaviour {
 		newQuad.GetComponent<MeshCollider>().sharedMesh = mesh;
 		
 		//TODO: Fix this for quad logic.
-		Vector3 position = new Vector3(tile.X * 100, 0, tile.Y * 100);
-		
+		Vector3 position = new Vector3(tile.X * 100, 0, tile.Y * 100);		
 		newQuad.transform.position = position;
 		
+		for (int i = 0; i < Random.Range(1,10); i++) {
+			GameObject newRock = (GameObject) GameObject.Instantiate(rock);
+			float z = tile.Y * 100 +  Random.Range(0, 100);
+			newRock.transform.position = ( new Vector3(tile.X * 100 + Random.Range(0, 100), -z, z));
+			//Debug.Log("New rock " + tile.X.ToString() + " " + tile.Y.ToString() + " " + newRock.transform.position.ToString());
+		}
+		
+		addObstacles(newQuad.transform);
 		return newQuad;
+	}
+	
+	
+	void addObstacles(Transform transform) 
+	{
+		// Instantiate several rocks	
 	}
 	
 	void GenerateQuadVertices(int quadX, int quadZ, Vector3[] vertices, Vector2[] uvs,
 		int[] triangles, Vector3[] normals, Vector4[] tangents) 
 	{
-		float quadMinX = quadX * 100;
-		float quadMaxX = (quadX + 1)  * 100;
-		float quadMinZ = quadZ * 100;
-		float quadMaxZ = (quadZ + 1) * 100;	
 		
 		vertices[0] = new Vector3(0, -quadZ * 100, 0);
 		vertices[1] = new Vector3(100, -quadZ * 100, 0);

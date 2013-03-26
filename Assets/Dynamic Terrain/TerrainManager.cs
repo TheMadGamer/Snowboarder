@@ -129,25 +129,26 @@ public class TerrainManager : MonoBehaviour {
 		newQuad.transform.position = position;
 		return newQuad;
 	}
-	
-	
-	void addObstacles(TileInds tile) 
+
+
+	void addObstacles (TileInds tile)
 	{
-		// Instantiate several rocks	
-		Vector3 position = new Vector3(tile.X * 100, 0, tile.Y * 100);		
-		
+		// Instantiate several rocks.
+		Vector3 position = new Vector3 (tile.X * 100, 0, tile.Y * 100);
+
 		for (int i = 0; i < Random.Range(1,10); i++) {
-			GameObject newRock = (GameObject) GameObject.Instantiate(rock);
-			float z = tile.Y * 100 +  Random.Range(0, 100);
-			newRock.transform.position = ( new Vector3(tile.X * 100 + Random.Range(0, 100), -z, z));
-			//Debug.Log("New rock " + tile.X.ToString() + " " + tile.Y.ToString() + " " + newRock.transform.position.ToString());
+			GameObject newRock = (GameObject)GameObject.Instantiate (rock);
+			float x = tile.X * 100 + Random.Range (0, 100);
+			float z = tile.Y * 100 + Random.Range (0, 100);
+			newRock.transform.position = (new Vector3 (x, HeightForXZ (x, z), z));
 		}
-		
+
+		// Instance several trees.
 		for (int i = 0; i < Random.Range(1,10); i++) {
-			GameObject newRock = (GameObject) GameObject.Instantiate(tree);
-			float z = tile.Y * 100 +  Random.Range(0, 100);
-			newRock.transform.position = ( new Vector3(tile.X * 100 + Random.Range(0, 100), -z, z));
-			//Debug.Log("New rock " + tile.X.ToString() + " " + tile.Y.ToString() + " " + newRock.transform.position.ToString());
+			GameObject newTree = (GameObject)GameObject.Instantiate (tree);
+			float x = tile.X * 100 + Random.Range (0, 100);
+			float z = tile.Y * 100 + Random.Range (0, 100);
+			newTree.transform.position = (new Vector3 (x, HeightForXZ (x, z), z));
 		}
 	}
 	
@@ -155,10 +156,10 @@ public class TerrainManager : MonoBehaviour {
 		int[] triangles, Vector3[] normals, Vector4[] tangents) 
 	{
 		
-		vertices[0] = new Vector3(0, -quadZ * 100, 0);
-		vertices[1] = new Vector3(100, -quadZ * 100, 0);
-		vertices[2] = new Vector3(0, -(quadZ + 1) * 100, 100);
-		vertices[3] = new Vector3(100, -(quadZ + 1) * 100, 100);
+		vertices[0] = new Vector3(0, HeightForXZ(0, quadZ * 100), 0);
+		vertices[1] = new Vector3(100,  HeightForXZ (100, quadZ * 100), 0);
+		vertices[2] = new Vector3(0,  HeightForXZ (0, (quadZ + 1) * 100), 100);
+		vertices[3] = new Vector3(100, HeightForXZ (0, (quadZ + 1) * 100), 100);
 		
 		for (int j = 0; j < kNumQuadSideVertices; j++) 
 		{
@@ -177,13 +178,12 @@ public class TerrainManager : MonoBehaviour {
 			tangents[j + kNumQuadSideVertices] = new Vector4(-1, 0, 0, 1);
 		}	
 	}
-	
-	// TODO: give this a slope
-	Vector3 GetVertexForXZ(float x, float z)
+
+	float HeightForXZ(float x, float z)
 	{
-		return new Vector3(x, 0, z);	
-	}	
-	
+		return -0.75f * z;
+	}
+
 	void TriangulateRow(int[] triangles) 
 	{	
 		for (int j = 0; j < kNumQuadSideVertices - 1; j++) 

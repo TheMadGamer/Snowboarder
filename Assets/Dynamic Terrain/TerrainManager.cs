@@ -76,7 +76,7 @@ public class TerrainManager : MonoBehaviour {
 				Debug.Log("Adding tile " + tileInds.ToString());
 				GameObject tile = GenerateQuad(tileInds);	
 				TileMap.Add(tileInds, tile);
-				
+				addObstacles(tileInds);		
 				// Parent to this.
 				//tile.transform.parent = transform;
 			}
@@ -125,9 +125,16 @@ public class TerrainManager : MonoBehaviour {
 		// Create a new mesh for the mesh collider
 		newQuad.GetComponent<MeshCollider>().sharedMesh = mesh;
 		
-		//TODO: Fix this for quad logic.
 		Vector3 position = new Vector3(tile.X * 100, 0, tile.Y * 100);		
 		newQuad.transform.position = position;
+		return newQuad;
+	}
+	
+	
+	void addObstacles(TileInds tile) 
+	{
+		// Instantiate several rocks	
+		Vector3 position = new Vector3(tile.X * 100, 0, tile.Y * 100);		
 		
 		for (int i = 0; i < Random.Range(1,10); i++) {
 			GameObject newRock = (GameObject) GameObject.Instantiate(rock);
@@ -136,14 +143,12 @@ public class TerrainManager : MonoBehaviour {
 			//Debug.Log("New rock " + tile.X.ToString() + " " + tile.Y.ToString() + " " + newRock.transform.position.ToString());
 		}
 		
-		addObstacles(newQuad.transform);
-		return newQuad;
-	}
-	
-	
-	void addObstacles(Transform transform) 
-	{
-		// Instantiate several rocks	
+		for (int i = 0; i < Random.Range(1,10); i++) {
+			GameObject newRock = (GameObject) GameObject.Instantiate(tree);
+			float z = tile.Y * 100 +  Random.Range(0, 100);
+			newRock.transform.position = ( new Vector3(tile.X * 100 + Random.Range(0, 100), -z, z));
+			//Debug.Log("New rock " + tile.X.ToString() + " " + tile.Y.ToString() + " " + newRock.transform.position.ToString());
+		}
 	}
 	
 	void GenerateQuadVertices(int quadX, int quadZ, Vector3[] vertices, Vector2[] uvs,

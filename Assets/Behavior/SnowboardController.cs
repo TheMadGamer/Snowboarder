@@ -334,13 +334,14 @@ public class SnowboardController : MonoBehaviour
 		}
 	}
 
-	public void ActivateRagdoll()
+	public void ActivateRagdoll ()
 	{
-		Debug.Log("ActivateRagdoll");
-		Rigidbody[] rigidBodies  = gameObject.GetComponentsInChildren<Rigidbody>();
+		Debug.Log ("ActivateRagdoll");
+		Rigidbody[] rigidBodies = gameObject.GetComponentsInChildren<Rigidbody> ();
 		MeshTransform.animation.enabled = false;
 		foreach (Rigidbody body in rigidBodies) {
-			body.isKinematic= false;
+			Debug.Log ("Deactivating body " + body.ToString ());
+			body.isKinematic = false;
 			body.velocity = mActualVelocity;
 		}
 	}

@@ -73,7 +73,7 @@ public class TerrainManager : MonoBehaviour {
 		{
 			if (!TileMap.ContainsKey(tileInds)) 
 			{
-				Debug.Log("Adding tile " + tileInds.ToString());
+				//Debug.Log("Adding tile " + tileInds.ToString());
 				GameObject tile = GenerateQuad(tileInds);	
 				TileMap.Add(tileInds, tile);
 				addObstacles(tileInds);		

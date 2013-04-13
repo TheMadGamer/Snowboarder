@@ -61,6 +61,7 @@
      <Compile Include="Assets\Dynamic Terrain\JumpGenerator.cs" />
      <Compile Include="Assets\Dynamic Terrain\TerrainManager.cs" />
      <Compile Include="Assets\Fence Layout\FenceLayout.cs" />
+     <Compile Include="Assets\GUI\GUIController.cs" />
      <Compile Include="Assets\Loader\AssetLoaderCS.cs" />
      <Compile Include="Assets\Loader\Music\AudioStreamer.cs" />
      <Compile Include="Assets\ProceduralTerrain\ProceduralTerrainGenerator.cs" />

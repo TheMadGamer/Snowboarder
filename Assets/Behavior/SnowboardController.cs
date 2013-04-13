@@ -122,6 +122,8 @@ public class SnowboardController : MonoBehaviour
 	
 	public float MinSpeed = 10.0f;
 	
+	public bool isRagdoll = false;
+	
 	public void Start()
 	{
 		
@@ -320,15 +322,16 @@ public class SnowboardController : MonoBehaviour
 		DeactivateRagdoll();
 	}
 	
-	public void DeactivateRagdoll()
+	public void DeactivateRagdoll ()
 	{
 		// TODO: Need to adjust the ragdoll and parent transform here so that the ragdoll position is correct relative to parent transform
+		isRagdoll = false;
 		
-		Debug.Log("DeactivateRagdoll");
-		Rigidbody[] rigidBodies  = gameObject.GetComponentsInChildren<Rigidbody>();
+		Debug.Log ("DeactivateRagdoll");
+		Rigidbody[] rigidBodies = gameObject.GetComponentsInChildren<Rigidbody> ();
 		MeshTransform.animation.enabled = true;
 		foreach (Rigidbody body in rigidBodies) {
-			body.isKinematic= true;
+			body.isKinematic = true;
 //			body.useGravity = false;
 			
 		}
@@ -336,6 +339,7 @@ public class SnowboardController : MonoBehaviour
 
 	public void ActivateRagdoll ()
 	{
+		isRagdoll = true;
 		Debug.Log ("ActivateRagdoll");
 		Rigidbody[] rigidBodies = gameObject.GetComponentsInChildren<Rigidbody> ();
 		MeshTransform.animation.enabled = false;

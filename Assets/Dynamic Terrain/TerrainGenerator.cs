@@ -31,10 +31,7 @@ public class TerrainGenerator : MonoBehaviour {
 		
 		for (int x = 0; x < HeightMap.GetLength(0); x++) {
 			for (int y = 0; y < HeightMap.GetLength(1); y++) {
-				HeightMap [x, y] = Mathf.Cos ( 0.01f * (positionOffsetX + x)) * 0.5f + 0.5f;
-				if (x == 0 && y == 0) {
-					Debug.Log("Height " + HeightMap[x, y].ToString());
-				}
+				HeightMap [x, y] = Mathf.Cos ( 0.01f * (positionOffsetY + x)) * 0.5f + 0.5f;
 			}
 		}
 		

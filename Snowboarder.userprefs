@@ -5,13 +5,13 @@
       <File FileName="Assets/Behavior/SnowboardController.cs" Line="1" Column="1" />
       <File FileName="Assets/Behavior/SnowboardLocalController.cs" Line="1" Column="1" />
       <File FileName="Assets/Dynamic Terrain/JumpGenerator.cs" Line="1" Column="1" />
-      <File FileName="Assets/Dynamic Terrain/TerrainManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Dynamic Terrain/TerrainGenerator.cs" Line="67" Column="18" />
+      <File FileName="Assets/Dynamic Terrain/TerrainManager.cs" Line="128" Column="1" />
       <File FileName="Assets/Behavior/StateMachine.cs" Line="1" Column="1" />
       <File FileName="Assets/Behavior/FallDownStates.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/GamePlayController.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/GUI/GUIController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Dynamic Terrain/HillGenerator.cs" Line="34" Column="16" />
-      <File FileName="Assets/Dynamic Terrain/TerrainGenerator.cs" Line="24" Column="24" />
+      <File FileName="Assets/Dynamic Terrain/HillGenerator.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

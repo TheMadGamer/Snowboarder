@@ -8,7 +8,7 @@ public class TerrainGenerator : MonoBehaviour {
 	public Transform targetObject;
 	public Terrain terrainPrefab;
 	
-	public Dictionary<TileInds, GameObject> TileMap = new Dictionary<TileInds, GameObject> ();
+	public Dictionary<TileInds, Terrain> TileMap = new Dictionary<TileInds, Terrain> ();
 	
 	public class TileInds
 	{
@@ -48,24 +48,24 @@ public class TerrainGenerator : MonoBehaviour {
 	void UpdateTiles ()
 	{
 		List<TileInds> inds = 
-			GetNeededTiles (targetObject.transform.position.x, targetObject.transform.position.z);
+			GetNeededTiles (targetObject.position.x, targetObject.position.z);
 		
 		foreach (TileInds tileInds in inds) {
 			if (!TileMap.ContainsKey (tileInds)) {
-				//Debug.Log("Adding tile " + tileInds.ToString());
-				GameObject tile = GenerateQuad (tileInds);	
+				Debug.Log("Adding tile " + tileInds.ToString());
+				Terrain tile = GenerateQuad (tileInds);	
 				TileMap.Add (tileInds, tile);
 				//addObstacles (tileInds);		
 			}
 		}	
 	}
 	
-	GameObject GenerateQuad (TileInds tile)
+	Terrain GenerateQuad (TileInds tile)
 	{
 		float tileSizeX = terrainPrefab.terrainData.size.x;
 		float tileSizeZ = terrainPrefab.terrainData.size.z;
 		
-		GameObject newQuad = (GameObject)GameObject.Instantiate (terrainPrefab);
+		Terrain newQuad = (Terrain)GameObject.Instantiate (terrainPrefab);
 		Vector3 position = new Vector3 (tile.X * tileSizeX, 0, tile.Y * tileSizeZ);		
 		newQuad.transform.position = position;
 		return newQuad;

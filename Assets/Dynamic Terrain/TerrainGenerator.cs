@@ -67,6 +67,12 @@ public class TerrainGenerator : MonoBehaviour {
 		
 		Terrain newQuad = (Terrain)GameObject.Instantiate (terrainPrefab);
 		Vector3 position = new Vector3 (tile.X * tileSizeX, 0, tile.Y * tileSizeZ);		
+		GenerateHeights (newQuad,
+			tile.X * terrainPrefab.terrainData.heightmapWidth, 
+			tile.Y * terrainPrefab.terrainData.heightmapHeight, 
+			10, 
+			10);
+
 		newQuad.transform.position = position;
 		return newQuad;
 	}
@@ -80,40 +86,48 @@ public class TerrainGenerator : MonoBehaviour {
 		int row = (int)Mathf.Round (x / tileSizeX) - 1;
 		int col = (int)Mathf.Round (z / tileSizeZ) - 1;
 		
-		for (int r = -2; r <= 2; r++) {
-			for (int c = -2; c <= 2; c++) {
+		for (int r = -1; r <= 1; r++) {
+			for (int c = -1; c <= 1; c++) {
 				inds.Add (new TileInds (row + r, col + c));
 			}
 		}
 		return inds;
 	}
 	
-	
-	
-	// Centers terrain at object.
-	/*void CenterTerrain ()
+	public void GenerateHeights (Terrain terrain, float xOffset, float yOffset, float tileXSize, float tileYSize)
 	{
-		terrain.transform.position = new Vector3 (targetObject.position.x - terrain.terrainData.size.x / 2.0f, 
-			0,
-			targetObject.position.z - terrain.terrainData.size.z / 2.0f);
-	}
-	
-	void UpdateTerrainHeight ()
-	{		
-		float positionOffsetX = targetObject.transform.position.x;
-		float positionOffsetY = targetObject.transform.position.z;
-		TerrainData terrainData = terrain.terrainData;
-		float[,] HeightMap = new float[terrainData.heightmapWidth, terrainData.heightmapHeight];
+		terrain.terrainData = CreateTerrain();
 		
-		for (int x = 0; x < HeightMap.GetLength(0); x++) {
-			for (int y = 0; y < HeightMap.GetLength(1); y++) {
-				HeightMap [x, y] = Mathf.Cos (0.01f * (positionOffsetY + x)) * 0.5f + 0.5f;
+		Debug.Log ("Gen heights " + xOffset.ToString () + " " + yOffset.ToString ());
+		Debug.Log ("to X " + terrain.terrainData.heightmapWidth.ToString ());
+		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+ 
+		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++) {
+			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++) {
+				float xCoord = ((((float)i) + xOffset) / terrain.terrainData.heightmapWidth) * tileXSize;
+				float yCoord = ((((float)k) + yOffset) / terrain.terrainData.heightmapHeight) * tileYSize;
+				if (i == 0 && k == 0) {
+					//Debug.Log ("    i " + i.ToString () + " k " + k.ToString ());
+					Debug.Log ("Perlin for " + xCoord.ToString () + " " + yCoord.ToString ());
+				}
+				//yCoord / 100.0f; //
+				heights [i, k] = Mathf.PerlinNoise (xCoord, yCoord) / 10.0f;
 			}
 		}
-		
-		terrainData.SetHeights (0, 0, HeightMap);
-	}*/
+ 
+		terrain.terrainData.SetHeights (0, 0, heights);
+	}
 	
+	private TerrainData CreateTerrain ()
+	{
+		TerrainData terrainData = new TerrainData ();
+		terrainData.size = terrainPrefab.terrainData.size;	 
+		terrainData.heightmapResolution = terrainPrefab.terrainData.heightmapHeight;
+		terrainData.baseMapResolution = terrainPrefab.terrainData.baseMapResolution;
+		terrainData.SetDetailResolution (terrainPrefab.terrainData.detailResolution, 1);
+		return terrainData;
+	}
+
 	void Update ()
 	{
 		UpdateTiles ();
